@@ -50,7 +50,7 @@ class KolodaSampleAdapter(val context: Context, val data: List<String>?) : BaseA
         }
 
         holder.bindData(getItem(position))
-        println("check position ${position}")
+    //    println("check position ${position}")
 
         return view
     }
@@ -63,7 +63,7 @@ class KolodaSampleAdapter(val context: Context, val data: List<String>?) : BaseA
 
         internal fun bindData( data: String) {
             Picasso.get().load(data).into(picture);
-            println("data check ${data}")
+       //     println("data check ${data}")
         }
 
     }

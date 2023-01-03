@@ -47,17 +47,18 @@ class MainActivity : AppCompatActivity() {
             override fun onNewTopCard(position: Int) {
                 cardsSwiped++
             //    Toast.makeText(this@MainActivity, "${cardsSwiped}", Toast.LENGTH_SHORT).show()
-                if(cardsSwiped == 8){
-                    getCats()
+                if(cardsSwiped == 9){
+                    getNewCats()
+                    cardsSwiped = 0
                 }
             }
 
             override fun onCardSwipedLeft(position: Int) {
-                Toast.makeText(this@MainActivity, "Left", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(this@MainActivity, "Left", Toast.LENGTH_SHORT).show()
             }
 
             override fun onCardSwipedRight(position: Int) {
-                Toast.makeText(this@MainActivity, "Right", Toast.LENGTH_SHORT).show()
+               // Toast.makeText(this@MainActivity, "Right", Toast.LENGTH_SHORT).show()
             }
 
             override fun onEmptyDeck() {
@@ -69,11 +70,11 @@ class MainActivity : AppCompatActivity() {
     private fun setUpCLickListeners() {
         dislike.setOnClickListener {
             koloda.onClickLeft()
-            Toast.makeText(this@MainActivity, "Left", Toast.LENGTH_SHORT).show()
+           // Toast.makeText(this@MainActivity, "Left", Toast.LENGTH_SHORT).show()
         }
         like.setOnClickListener {
             koloda.onClickRight()
-            Toast.makeText(this@MainActivity, "Right", Toast.LENGTH_SHORT).show()
+           // Toast.makeText(this@MainActivity, "Right", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -95,25 +96,58 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun getCats(){
+
         data.clear()
         val URL = "https://api.thecatapi.com/v1/images/search?limit=10" //Формируем url с запросом для api
         val queue = Volley.newRequestQueue(this) //Инициализация переменной для передачи запроса
         val stringRequest = StringRequest(Request.Method.GET, URL, { //Передача запроса и получение ответа
                 response -> //Случай удачного результата отклика api
             val obj = JSONArray(response) //Получение json файла
+
             //    val res = obj.getJSONArray("Value") //Работа с заголовком current json
             for (i in 0 until obj.length()) {
                 data.add(obj.getJSONObject(i).getString("url"))
             }
-            adapter = KolodaSampleAdapter(this, data)
-            koloda.adapter = adapter
-            koloda.isNeedCircleLoading = false
+            setAdapter()
         }, {
                 error -> //Случай неудачного результата отклика api
             Toast.makeText(this, "$error", Toast.LENGTH_SHORT).show()
             println(error.toString())
+
         })
         queue.add(stringRequest) //Добавление запроса в очередь
+
+    }
+
+    fun getNewCats(){
+
+        data.clear()
+        val URL = "https://api.thecatapi.com/v1/images/search?limit=10"
+        val queue = Volley.newRequestQueue(this)
+        val stringRequest = StringRequest(Request.Method.GET, URL, {
+                response ->
+            val obj = JSONArray(response)
+            for (i in 0 until obj.length()) {
+                println(obj.getJSONObject(i).getString("url"))
+                data.add(obj.getJSONObject(i).getString("url"))
+            }
+            adapter?.setData(data)
+            koloda.adapter = adapter
+            koloda.reloadAdapterData()
+        }, {
+                error -> //Случай неудачного результата отклика api
+            Toast.makeText(this, "$error", Toast.LENGTH_SHORT).show()
+            println(error.toString())
+
+        })
+        queue.add(stringRequest) //Добавление запроса в очередь
+
+    }
+
+    private fun setAdapter(){
+        adapter = KolodaSampleAdapter(this, data)
+        koloda.adapter = adapter
+        koloda.isNeedCircleLoading = false
     }
 
 }
