@@ -8,14 +8,20 @@ import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import com.android.volley.Request
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
 import com.yalantis.library.Koloda
 import com.yalantis.library.KolodaListener
+import org.json.JSONArray
+import org.json.JSONObject
 
 class MainActivity : AppCompatActivity() {
     private lateinit var koloda: Koloda
     private lateinit var dislike: ImageView
     private lateinit var like: ImageView
     private var adapter: KolodaSampleAdapter? = null
+    private val data = ArrayList<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,7 +29,7 @@ class MainActivity : AppCompatActivity() {
 
         initElement()
         initializeDeck()
-        fillData()
+        getCats()
         setUpCLickListeners()
     }
 
@@ -39,7 +45,11 @@ class MainActivity : AppCompatActivity() {
             internal var cardsSwiped = 0
 
             override fun onNewTopCard(position: Int) {
-                //todo realize your logic
+                cardsSwiped++
+            //    Toast.makeText(this@MainActivity, "${cardsSwiped}", Toast.LENGTH_SHORT).show()
+                if(cardsSwiped == 8){
+                    getCats()
+                }
             }
 
             override fun onCardSwipedLeft(position: Int) {
@@ -54,17 +64,6 @@ class MainActivity : AppCompatActivity() {
                 //todo realize your logic
             }
         }
-    }
-
-    private fun fillData() {
-        val data = ArrayList<String>()
-        data.add("https://kupit-kota.ru/wp-content/uploads/2022/07/kak-uhajivat-za-kotenkom-2048x1536.jpeg")
-        data.add("https://pic.rutubelist.ru/video/17/b1/17b100a0bcbc6e5e8d11101cde21aca7.jpg")
-        data.add("https://avatars.mds.yandex.net/i?id=501eb8a6f4c7a712a7cac75606ce17be-4230996-images-thumbs&ref=rim&n=33&w=150&h=150")
-        data.add("https://i.pinimg.com/736x/bc/07/7d/bc077d3bee3ed22557493f47378a3f83.jpg")
-        adapter = KolodaSampleAdapter(this, data)
-        koloda.adapter = adapter
-        koloda.isNeedCircleLoading = true
     }
 
     private fun setUpCLickListeners() {
@@ -93,6 +92,28 @@ class MainActivity : AppCompatActivity() {
         else -> {
             super.onOptionsItemSelected(item)
         }
+    }
+
+    fun getCats(){
+        data.clear()
+        val URL = "https://api.thecatapi.com/v1/images/search?limit=10" //Формируем url с запросом для api
+        val queue = Volley.newRequestQueue(this) //Инициализация переменной для передачи запроса
+        val stringRequest = StringRequest(Request.Method.GET, URL, { //Передача запроса и получение ответа
+                response -> //Случай удачного результата отклика api
+            val obj = JSONArray(response) //Получение json файла
+            //    val res = obj.getJSONArray("Value") //Работа с заголовком current json
+            for (i in 0 until obj.length()) {
+                data.add(obj.getJSONObject(i).getString("url"))
+            }
+            adapter = KolodaSampleAdapter(this, data)
+            koloda.adapter = adapter
+            koloda.isNeedCircleLoading = false
+        }, {
+                error -> //Случай неудачного результата отклика api
+            Toast.makeText(this, "$error", Toast.LENGTH_SHORT).show()
+            println(error.toString())
+        })
+        queue.add(stringRequest) //Добавление запроса в очередь
     }
 
 }
