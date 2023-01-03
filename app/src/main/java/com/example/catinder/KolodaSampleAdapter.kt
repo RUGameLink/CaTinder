@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
+import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 
 class KolodaSampleAdapter(val context: Context, val data: List<String>?) : BaseAdapter() {
@@ -60,9 +61,18 @@ class KolodaSampleAdapter(val context: Context, val data: List<String>?) : BaseA
      */
     class DataViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         var picture = view.findViewById<ImageView>(R.id.catImg)
-
         internal fun bindData( data: String) {
-            Picasso.get().load(data).into(picture);
+            picture.visibility = View.GONE
+            Picasso.get().load(data).into(picture,object: com.squareup.picasso.Callback {
+                override fun onSuccess() {
+                    picture.visibility = View.VISIBLE
+
+                }
+
+                override fun onError(e: java.lang.Exception?) {
+                    //do smth when there is picture loading error
+                }
+            })
        //     println("data check ${data}")
         }
 

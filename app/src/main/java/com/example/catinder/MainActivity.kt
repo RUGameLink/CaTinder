@@ -47,7 +47,7 @@ class MainActivity : AppCompatActivity() {
             override fun onNewTopCard(position: Int) {
                 cardsSwiped++
             //    Toast.makeText(this@MainActivity, "${cardsSwiped}", Toast.LENGTH_SHORT).show()
-                if(cardsSwiped == 9){
+                if(cardsSwiped == 10){
                     getNewCats()
                     cardsSwiped = 0
                 }
