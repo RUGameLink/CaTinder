@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout  xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -14,4 +14,37 @@
         android:layout_height="match_parent"
         app:koloda_card_layout="@layout/item_koloda" />
 
-</LinearLayout>
+    <LinearLayout
+        android:id="@+id/buttonsLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16dp"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/dislike"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:backgroundTint="@color/red"
+            android:src="@drawable/favorite_border_24"
+            android:tint="@color/red" />
+
+
+        <ImageButton
+            android:id="@+id/like"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="40dp"
+            android:layout_weight="0.5"
+            android:background="@android:color/transparent"
+            android:backgroundTint="@color/green"
+            android:src="@drawable/favorite_24"
+            android:tint="@color/green" />
+
+    </LinearLayout>
+
+</RelativeLayout >
