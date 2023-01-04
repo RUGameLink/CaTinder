@@ -82,6 +82,9 @@ class MainActivity : AppCompatActivity() {
         }
         like.setOnClickListener {
             koloda.onClickRight()
+            dbManager.openDb() //Открытие бд
+            dbManager.insertToDb(adapter!!.getItem(cardsSwiped-2)) //Запись
+            dbManager.closeDb() //Закрытие бд
            // Toast.makeText(this@MainActivity, "Right", Toast.LENGTH_SHORT).show()
         }
     }
