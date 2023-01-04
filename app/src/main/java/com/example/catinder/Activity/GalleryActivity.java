@@ -2,22 +2,29 @@ package com.example.catinder.Activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.catinder.DataBase.DbManager;
 import com.example.catinder.Model.PhotoData;
 import com.example.catinder.R;
 
+import java.util.ArrayList;
+
 public class GalleryActivity extends AppCompatActivity {
 
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,8 +34,7 @@ public class GalleryActivity extends AppCompatActivity {
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rv_images);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(layoutManager);
-
-        GalleryActivity.ImageGalleryAdapter adapter = new GalleryActivity.ImageGalleryAdapter(this, PhotoData.getSpacePhotos());
+        GalleryActivity.ImageGalleryAdapter adapter = new GalleryActivity.ImageGalleryAdapter(this, PhotoData.getSpacePhotos(this));
         recyclerView.setAdapter(adapter);
 
     }
@@ -51,7 +57,7 @@ public class GalleryActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(ImageGalleryAdapter.MyViewHolder holder, int position) {
 
-            PhotoData spacePhoto = mPhotoData[position];
+            PhotoData spacePhoto = mPhotoData.get(position);
             ImageView imageView = holder.mPhotoImageView;
 
             Glide.with(mContext)
@@ -62,7 +68,7 @@ public class GalleryActivity extends AppCompatActivity {
 
         @Override
         public int getItemCount() {
-            return (mPhotoData.length);
+            return (mPhotoData.size());
         }
 
         public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -81,7 +87,7 @@ public class GalleryActivity extends AppCompatActivity {
 
                 int position = getAdapterPosition();
                 if(position != RecyclerView.NO_POSITION) {
-                    PhotoData spacePhoto = mPhotoData[position];
+                    PhotoData spacePhoto = mPhotoData.get(position);
 
                     Intent intent = new Intent(mContext, PhotoActivity.class);
                     intent.putExtra(PhotoActivity.EXTRA_SPACE_PHOTO, spacePhoto);
@@ -90,10 +96,10 @@ public class GalleryActivity extends AppCompatActivity {
             }
         }
 
-        private PhotoData[] mPhotoData;
+        private ArrayList<PhotoData> mPhotoData;
         private Context mContext;
 
-        public ImageGalleryAdapter(GalleryActivity context, PhotoData[] spacePhotos) {
+        public ImageGalleryAdapter(GalleryActivity context, ArrayList<PhotoData> spacePhotos) {
             mContext = context;
             mPhotoData = spacePhotos;
         }

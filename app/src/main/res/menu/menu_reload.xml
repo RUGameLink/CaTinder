@@ -8,4 +8,10 @@
         android:icon="@drawable/ic_reload"
         app:showAsAction="always"/>
 
+    <item
+        android:id="@+id/actionGallery"
+        android:title=""
+        android:icon="@drawable/photo_library_24"
+        app:showAsAction="always"/>
+
 </menu>

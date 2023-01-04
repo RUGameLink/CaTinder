@@ -1,12 +1,22 @@
 package com.example.catinder.Model;
 
+import android.content.Context;
+import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import androidx.annotation.RequiresApi;
+
+import com.example.catinder.DataBase.DbManager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class PhotoData implements Parcelable {
 
     private String mUrl;
     private String mTitle;
+
 
     public PhotoData(String url, String title) {
         mUrl = url;
@@ -46,16 +56,14 @@ public class PhotoData implements Parcelable {
         mTitle = title;
     }
 
-    public static  PhotoData[] getSpacePhotos() {
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public static ArrayList<PhotoData> getSpacePhotos(Context context) {
+        DbManager dbManager = new DbManager(context); //Инициализация бд-менеджера
+        dbManager.openDb(); //Открытие бд
+        ArrayList<PhotoData> urlData = dbManager.readDbDataNames();
+        dbManager.closeDb(); //Закрытие бд
 
-        return new PhotoData[]{
-                new PhotoData("http://i.imgur.com/zuG2bGQ.jpg", "Galaxy"),
-                new PhotoData("http://i.imgur.com/ovr0NAF.jpg", "Space Shuttle"),
-                new PhotoData("http://i.imgur.com/n6RfJX2.jpg", "Galaxy Orion"),
-                new PhotoData("http://i.imgur.com/qpr5LR2.jpg", "Earth"),
-                new PhotoData("http://i.imgur.com/pSHXfu5.jpg", "Astronaut"),
-                new PhotoData("http://i.imgur.com/3wQcZeY.jpg", "Satellite"),
-        };
+        return urlData;
     }
 
     @Override

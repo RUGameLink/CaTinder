@@ -1,10 +1,12 @@
 package com.example.catinder.Activity
 
+import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Gallery
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -12,6 +14,7 @@ import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.example.catinder.Adapter.KolodaSampleAdapter
+import com.example.catinder.DataBase.DbManager
 import com.example.catinder.R
 import com.yalantis.library.Koloda
 import com.yalantis.library.KolodaListener
@@ -23,6 +26,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var like: ImageView
     private var adapter: KolodaSampleAdapter? = null
     private val data = ArrayList<String>()
+    var cardsSwiped = 0
+
+    private val dbManager = DbManager(this) //Инициализация бд-менеджера
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,8 +49,6 @@ class MainActivity : AppCompatActivity() {
     private fun initializeDeck() {
         koloda.kolodaListener = object : KolodaListener {
 
-            internal var cardsSwiped = 0
-
             override fun onNewTopCard(position: Int) {
                 cardsSwiped++
             //    Toast.makeText(this@MainActivity, "${cardsSwiped}", Toast.LENGTH_SHORT).show()
@@ -60,6 +64,9 @@ class MainActivity : AppCompatActivity() {
 
             override fun onCardSwipedRight(position: Int) {
                // Toast.makeText(this@MainActivity, "Right", Toast.LENGTH_SHORT).show()
+                dbManager.openDb() //Открытие бд
+                dbManager.insertToDb(adapter!!.getItem(cardsSwiped-2)) //Запись
+                dbManager.closeDb() //Закрытие бд
             }
 
             override fun onEmptyDeck() {
@@ -89,6 +96,11 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) { //Слушаем нажатие на кнопку по id
         R.id.actionReload -> {
             koloda.reloadAdapterData()
+            true
+        }
+        R.id.actionGallery -> {
+            val i = Intent(this, GalleryActivity::class.java)
+            startActivity(i)
             true
         }
         else -> {

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
+import com.example.catinder.Model.PhotoData
 
 class DbManager (context: Context) {
     val dbHelper = DbHelper(context)
@@ -20,8 +21,8 @@ class DbManager (context: Context) {
     }
 
     @SuppressLint("Range")
-    fun readDbDataNames(): ArrayList<String>{ //Считывание из бд в лист
-        val dataList = ArrayList<String>()
+    fun readDbDataNames(): ArrayList<PhotoData>{ //Считывание из бд в лист
+        val dataList = ArrayList<PhotoData>()
 
         val cursor = dataBase?.query(
             DbName.TABLE_NAME,
@@ -34,7 +35,7 @@ class DbManager (context: Context) {
         with(cursor){
             while (this?.moveToNext()!!){
                 val dataText = cursor?.getString(cursor.getColumnIndex(DbName.COLUMN_NAME_TITLE))//Считывание в переменную из столбца
-                dataList.add(dataText.toString())
+                dataList.add(PhotoData(dataText.toString(), "cat"))
             }
         }
         cursor?.close()
