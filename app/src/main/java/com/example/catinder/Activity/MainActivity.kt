@@ -1,4 +1,4 @@
-package com.example.catinder
+package com.example.catinder.Activity
 
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
@@ -11,10 +11,11 @@ import androidx.annotation.RequiresApi
 import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
+import com.example.catinder.Adapter.KolodaSampleAdapter
+import com.example.catinder.R
 import com.yalantis.library.Koloda
 import com.yalantis.library.KolodaListener
 import org.json.JSONArray
-import org.json.JSONObject
 
 class MainActivity : AppCompatActivity() {
     private lateinit var koloda: Koloda
@@ -26,7 +27,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+        println("Обложка в ресурсах ${R.drawable.card}")
         initElement()
         initializeDeck()
         getCats()
@@ -47,7 +48,7 @@ class MainActivity : AppCompatActivity() {
             override fun onNewTopCard(position: Int) {
                 cardsSwiped++
             //    Toast.makeText(this@MainActivity, "${cardsSwiped}", Toast.LENGTH_SHORT).show()
-                if(cardsSwiped == 10){
+                if(cardsSwiped == 11){
                     getNewCats()
                     cardsSwiped = 0
                 }
@@ -108,6 +109,7 @@ class MainActivity : AppCompatActivity() {
             for (i in 0 until obj.length()) {
                 data.add(obj.getJSONObject(i).getString("url"))
             }
+            data.add(R.drawable.card.toString())
             setAdapter()
         }, {
                 error -> //Случай неудачного результата отклика api
@@ -131,6 +133,7 @@ class MainActivity : AppCompatActivity() {
                 println(obj.getJSONObject(i).getString("url"))
                 data.add(obj.getJSONObject(i).getString("url"))
             }
+            data.add(R.drawable.card.toString())
             adapter?.setData(data)
             koloda.adapter = adapter
             koloda.reloadAdapterData()

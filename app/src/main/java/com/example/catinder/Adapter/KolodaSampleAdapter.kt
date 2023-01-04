@@ -1,4 +1,4 @@
-package com.example.catinder
+package com.example.catinder.Adapter
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
-import com.squareup.picasso.Callback
+import com.example.catinder.R
 import com.squareup.picasso.Picasso
 
 class KolodaSampleAdapter(val context: Context, val data: List<String>?) : BaseAdapter() {

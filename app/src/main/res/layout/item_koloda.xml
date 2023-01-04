@@ -13,18 +13,21 @@
     app:cardUseCompatPadding="true"
     card_view:cardPreventCornerOverlap="false">
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyle"
+    <com.github.ybq.android.spinkit.SpinKitView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/spin_kit"
+        style="@style/SpinKitView.Large.ChasingDots"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center" />
+        android:layout_gravity="center"
+        app:SpinKit_Color="@color/green" />
 
     <ImageView
         android:id="@+id/catImg"
         android:layout_width="332dp"
         android:layout_height="490dp"
         android:background="@drawable/koloda_card_view_background"
-        android:scaleType="fitCenter" />
+        android:scaleType="fitCenter"
+        app:srcCompat="@drawable/card" />
 
 </androidx.cardview.widget.CardView>

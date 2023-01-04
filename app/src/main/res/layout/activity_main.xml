@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    tools:context=".MainActivity">
+    tools:context=".Activity.MainActivity">
 
     <com.yalantis.library.Koloda
         android:id="@+id/koloda"
@@ -30,7 +30,7 @@
             android:layout_weight="1"
             android:background="@android:color/transparent"
             android:backgroundTint="@color/red"
-            android:src="@drawable/favorite_border_24"
+            android:src="@drawable/broken_heart"
             android:tint="@color/red" />
 
 
