@@ -8,11 +8,22 @@
     android:gravity="center"
     tools:context=".Activity.MainActivity">
 
+    <com.github.ybq.android.spinkit.SpinKitView
+        android:id="@+id/spin_main"
+        style="@style/SpinKitView.Large.ChasingDots"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center|clip_vertical|center_horizontal"
+        android:foregroundGravity="center_vertical|clip_horizontal|center"
+        app:SpinKit_Color="@color/green" />
+
     <com.yalantis.library.Koloda
         android:id="@+id/koloda"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:koloda_card_layout="@layout/item_koloda" />
+        app:koloda_card_layout="@layout/item_koloda" >
+
+    </com.yalantis.library.Koloda>
 
     <LinearLayout
         android:id="@+id/buttonsLayout"

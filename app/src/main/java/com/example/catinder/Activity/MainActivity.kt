@@ -4,8 +4,11 @@ import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.Gallery
 import android.widget.ImageView
 import android.widget.Toast
@@ -16,6 +19,7 @@ import com.android.volley.toolbox.Volley
 import com.example.catinder.Adapter.KolodaSampleAdapter
 import com.example.catinder.DataBase.DbManager
 import com.example.catinder.R
+import com.github.ybq.android.spinkit.SpinKitView
 import com.yalantis.library.Koloda
 import com.yalantis.library.KolodaListener
 import org.json.JSONArray
@@ -24,6 +28,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var koloda: Koloda
     private lateinit var dislike: ImageView
     private lateinit var like: ImageView
+    private lateinit var spin_main: SpinKitView
     private var adapter: KolodaSampleAdapter? = null
     private val data = ArrayList<String>()
     var cardsSwiped = 0
@@ -35,6 +40,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         println("Обложка в ресурсах ${R.drawable.card}")
         initElement()
+        hideElem(false)
         initializeDeck()
         getCats()
         setUpCLickListeners()
@@ -44,6 +50,7 @@ class MainActivity : AppCompatActivity() {
         koloda = findViewById(R.id.koloda)
         dislike = findViewById(R.id.dislike)
         like = findViewById(R.id.like)
+        spin_main = findViewById(R.id.spin_main)
     }
 
     private fun initializeDeck() {
@@ -52,9 +59,17 @@ class MainActivity : AppCompatActivity() {
             override fun onNewTopCard(position: Int) {
                 cardsSwiped++
             //    Toast.makeText(this@MainActivity, "${cardsSwiped}", Toast.LENGTH_SHORT).show()
-                if(cardsSwiped == 11){
-                    getNewCats()
+                if(cardsSwiped == data.size){
                     cardsSwiped = 0
+                    getNewCats()
+                    hideElem(true)
+                    Handler(Looper.getMainLooper()).postDelayed(
+                        {
+                            hideElem(false)
+                        },
+                        2000 // value in milliseconds
+                    )
+
                 }
             }
 
@@ -64,8 +79,10 @@ class MainActivity : AppCompatActivity() {
 
             override fun onCardSwipedRight(position: Int) {
                // Toast.makeText(this@MainActivity, "Right", Toast.LENGTH_SHORT).show()
+                val position = cardsSwiped - 2
                 dbManager.openDb() //Открытие бд
-                dbManager.insertToDb(adapter!!.getItem(cardsSwiped-2)) //Запись
+                dbManager.insertToDb(adapter!!.getItem(position)) //Запись
+                println("index cat is ${position}")
                 dbManager.closeDb() //Закрытие бд
             }
 
@@ -75,15 +92,32 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun hideElem(trigger: Boolean){
+        if (trigger){
+            koloda.visibility = View.INVISIBLE
+            like.visibility = View.INVISIBLE
+            dislike.visibility = View.INVISIBLE
+            spin_main.visibility = View.VISIBLE
+        }
+        else{
+            koloda.visibility = View.VISIBLE
+            like.visibility = View.VISIBLE
+            dislike.visibility = View.VISIBLE
+            spin_main.visibility = View.INVISIBLE
+        }
+    }
+
     private fun setUpCLickListeners() {
         dislike.setOnClickListener {
             koloda.onClickLeft()
            // Toast.makeText(this@MainActivity, "Left", Toast.LENGTH_SHORT).show()
         }
         like.setOnClickListener {
+            val position = cardsSwiped - 2
             koloda.onClickRight()
             dbManager.openDb() //Открытие бд
-            dbManager.insertToDb(adapter!!.getItem(cardsSwiped-2)) //Запись
+            dbManager.insertToDb(adapter!!.getItem(position)) //Запись
+            println("index cat is ${position}")
             dbManager.closeDb() //Закрытие бд
            // Toast.makeText(this@MainActivity, "Right", Toast.LENGTH_SHORT).show()
         }
@@ -112,7 +146,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun getCats(){
-
         data.clear()
         val URL = "https://api.thecatapi.com/v1/images/search?limit=10" //Формируем url с запросом для api
         val queue = Volley.newRequestQueue(this) //Инициализация переменной для передачи запроса
@@ -124,7 +157,8 @@ class MainActivity : AppCompatActivity() {
             for (i in 0 until obj.length()) {
                 data.add(obj.getJSONObject(i).getString("url"))
             }
-            data.add(R.drawable.card.toString())
+            //data.add(R.drawable.card.toString())
+            println("data size ${data.size}")
             setAdapter()
         }, {
                 error -> //Случай неудачного результата отклика api
@@ -137,8 +171,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun getNewCats(){
-
         data.clear()
+        cardsSwiped = 2
         val URL = "https://api.thecatapi.com/v1/images/search?limit=10"
         val queue = Volley.newRequestQueue(this)
         val stringRequest = StringRequest(Request.Method.GET, URL, {
@@ -148,7 +182,7 @@ class MainActivity : AppCompatActivity() {
                 println(obj.getJSONObject(i).getString("url"))
                 data.add(obj.getJSONObject(i).getString("url"))
             }
-            data.add(R.drawable.card.toString())
+        //    data.add(R.drawable.card.toString())
             adapter?.setData(data)
             koloda.adapter = adapter
             koloda.reloadAdapterData()
@@ -159,11 +193,12 @@ class MainActivity : AppCompatActivity() {
 
         })
         queue.add(stringRequest) //Добавление запроса в очередь
-
+        println("data size ${data.size}")
     }
 
     private fun setAdapter(){
         adapter = KolodaSampleAdapter(this, data)
+        println("adapter size ${adapter!!.getCount()}")
         koloda.adapter = adapter
         koloda.isNeedCircleLoading = false
     }

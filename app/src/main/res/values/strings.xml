@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">CaTinder</string>
+    <string name="not_cats">Туть нет котиков... ^._.^</string>
 </resources>
